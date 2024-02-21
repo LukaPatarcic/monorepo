@@ -1,38 +1,55 @@
-name: Checks
+name: CI
+
+# Defines when the action should be triggered
 on:
   pull_request:
 
+# Jobs to be run
 jobs:
-  tests:
-    name: Unit tests
-    runs-on: ubuntu-18.04
+  build-and-test:
+    # Virtual environment
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout repo
+      # Check out your repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
+
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          fetch-depth: 0
-      - name: Setup node
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 18
-      - name: Restore node_modules cache
-        uses: actions/cache@v2.1.5
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - name: Turbo Cache
-        id: turbo-cache
+          node-version: '14'
+
+      # Cache dependencies using actions/cache with key based on the exact version of lock file
+      # TurboRepo requires a specific caching approach, leveraging its own caching mechanism if available, or node_modules caching otherwise
+      - name: Cache node modules
         uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
         with:
-          path: .turbo
-          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+          # This path is a typical cache directory for npm, adapt it to TurboRepo's cache directory if different
+          path: ~/.npm
+          # Update the key if using a specific caching strategy with TurboRepo
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            turbo-${{ github.job }}-${{ github.ref_name }}-
-      - name: Install packages
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      # Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
-      - name: All tests
+
+      # Run tests
+      - name: Run Tests
         run: npm run test
-      - name: Linting
+
+      # Run lint
+      - name: Run Lint
         run: npm run lint
-      - name: TypeCheck
+
+      # Run type checking
+      - name: Run Typecheck
         run: npm run type-check
