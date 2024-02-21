@@ -52,6 +52,7 @@ const LINKS = [
 ];
 
 export default function Page(): JSX.Element {
+  console.log('no build')
   return (
     <main className={styles.main}>
       <div className={styles.description}>
