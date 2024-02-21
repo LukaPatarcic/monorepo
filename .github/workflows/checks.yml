@@ -23,20 +23,21 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
 
-      # Install pnpm
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      # Cache pnpm modules
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
         with:
-          path: |
-            ~/.pnpm-store
-            **/node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          version: 6.x
+
+#      # Cache pnpm modules
+#      - name: Cache pnpm modules
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.pnpm-store
+#            **/node_modules
+#          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pnpm-
 
       # Install dependencies using pnpm
       - name: Install Dependencies
