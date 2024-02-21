@@ -7,90 +7,50 @@ on:
 # Jobs to be run
 jobs:
   install-dependencies:
-    # Virtual environment
     runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.cache-pnpm.outputs.cache-key }}
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-
-      # Check out your repository
       - name: Checkout Repository
         uses: actions/checkout@v2
-
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
           version: 8
-
-      # Setup Node.js environment and cache
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'
-
-      # Install dependencies
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      # Cache dependencies
-      - name: Cache pnpm modules
-        id: cache-pnpm
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        run: pnpm install
   test:
-    needs: install-dependencies
+    needs: [ install-dependencies ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - name: Use Cached pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ needs.install-dependencies.outputs.cache-key }}
-      - name: Run Tests
-        run: pnpm run test
+          node-version: '16'
+          cache: 'pnpm'
+      - run: pnpm run test
 
   lint:
-    needs: install-dependencies
+    needs: [ install-dependencies ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - name: Use Cached pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ needs.install-dependencies.outputs.cache-key }}
-      - name: Run Lint
-        run: pnpm run lint
+          node-version: '16'
+          cache: 'pnpn'
+      - run: pnpm run lint
 
   type-check:
-    needs: install-dependencies
+    needs: [ install-dependencies ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - name: Use Cached pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ needs.install-dependencies.outputs.cache-key }}
-      - name: Run Typecheck
-        run: pnpm run type-check
+          node-version: '16'
+          cache: 'pnpm'
+      - run: pnpm run type-check
