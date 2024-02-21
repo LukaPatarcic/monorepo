@@ -2,6 +2,15 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
+    "type-check": {},
+    "test": {
+      "outputs": [],
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", ".turbo/**"]
+    },
+    "test:watch": {
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
