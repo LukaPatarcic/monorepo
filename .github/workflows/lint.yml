@@ -1,4 +1,4 @@
-name: CI
+name: Lint
 
 # Defines when the action should be triggered
 on:
@@ -32,14 +32,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Run tests
-      - name: Run Tests
-        run: pnpm run test
-
       # Run lint
       - name: Run Lint
         run: pnpm run lint
 
-      # Run type checking
-      - name: Run Typecheck
-        run: pnpm run type-check
