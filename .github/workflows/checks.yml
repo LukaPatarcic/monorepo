@@ -39,6 +39,8 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
       - run: pnpm run test
+        with:
+          cache: 'pnpm'
 
   lint:
     needs: [ install-dependencies ]
@@ -54,6 +56,8 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
       - run: pnpm run lint
+        with:
+          cache: 'pnpm'
 
   type-check:
     needs: [ install-dependencies ]
@@ -69,3 +73,5 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
       - run: pnpm run type-check
+        with:
+          cache: 'pnpm'
