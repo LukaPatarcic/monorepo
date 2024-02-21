@@ -16,40 +16,40 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Setup Node.js environment
+      # Setup Node.js environment and cache
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '16'
+          cache: 'pnpm'
 
-      # Cache dependencies using actions/cache with key based on the exact version of lock file
-      # TurboRepo requires a specific caching approach, leveraging its own caching mechanism if available, or node_modules caching otherwise
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Cache pnpm modules
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
         with:
-          # This path is a typical cache directory for npm, adapt it to TurboRepo's cache directory if different
-          path: ~/.npm
-          # Update the key if using a specific caching strategy with TurboRepo
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          path: |
+            ~/.pnpm-store
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-pnpm-
 
-      # Install dependencies
+      # Install dependencies using pnpm
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       # Run tests
       - name: Run Tests
-        run: npm run test
+        run: pnpm run test
 
       # Run lint
       - name: Run Lint
-        run: npm run lint
+        run: pnpm run lint
 
       # Run type checking
       - name: Run Typecheck
-        run: npm run type-check
+        run: pnpm run type-check
