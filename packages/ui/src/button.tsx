@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 export const Button = ({ children, className, appName }: ButtonProps) => {
-  console.log('change')
+  console.log('change2')
   return (
     <button
       className={className}
